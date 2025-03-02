@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const OpenAI = require("openai");
+const fetch = require("node-fetch"); // Solo una vez
+
 require('dotenv').config();
 
 const app = express();
@@ -16,6 +18,10 @@ const openai = new OpenAI({
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (req, res) => {
+    res.send("La API está funcionando correctamente.");
+});
+
 app.get("/weather", async (req, res) => {
     const { city } = req.query;
     if (!city) {
@@ -23,7 +29,6 @@ app.get("/weather", async (req, res) => {
     }
 
     try {
-        const fetch = (await import("node-fetch")).default; // Dynamic import
         const response = await fetch(`https://api.weatherbit.io/v2.0/current?city=${city}&key=${WEATHER_API_KEY}&lang=en`);
         const data = await response.json();
 
